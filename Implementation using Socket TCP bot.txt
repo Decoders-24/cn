@@ -1,0 +1,64 @@
+/*Implementation using Socket TCP both client and server.*/
+//My client
+import java.io.*; 
+import java.net.*; 
+import java.util.Scanner;  
+public class MyClient { 
+    public static void main (String [] args) { 
+        try { 
+            Socket s = new Socket ("localhost", 6666); 
+            DataOutputStream dout = new DataOutputStream(s.getOutputStream()); 
+     dout.writeUTF("Server & Client"); 
+            Scanner scanner = new Scanner (System.in); 
+            System.out.print("Enter your Roll: "); 
+            String userMessage = scanner.nextLine(); 
+            dout.writeUTF(userMessage); 
+            dout.flush(); 
+ 
+            // Read additional parameters (you can modify this part) 
+            String additionalData = "Your additional data here"; // Replace with your actual data 
+            dout.writeUTF(additionalData); 
+            dout.flush(); 
+ 
+            dout.close(); 
+            s.close(); 
+        } catch (Exception e) { 
+            System.out.println(e); 
+        } 
+    } 
+} 
+//my Server
+import java.io.*; 
+import java.net.*; 
+ 
+public class MyServer { 
+    public static void main (String [] args) { 
+        try { 
+            ServerSocket ss = new ServerSocket(6666); 
+            System.out.println("Server is waiting for a connection..."); 
+ 
+            Socket s = ss.accept(); 
+            System.out.println("Client connected!"); 
+ 
+            // Create input stream to read data from the client 
+            DataInputStream dis = new DataInputStream(s.getInputStream()); 
+ 
+            // Read the initial message from the client 
+            String clientMessage = dis.readUTF(); 
+            System.out.println("Program Name: " + clientMessage); 
+            String clientMessage1 = dis.readUTF(); 
+            System.out.println("Roll Number: " + clientMessage1); 
+ 
+            // Read additional parameters (you can modify this part) 
+            String additionalData = dis.readUTF(); 
+            System.out.println("Message Recived: " + additionalData); 
+ 
+            // Close resources 
+            dis.close(); 
+            s.close(); 
+            ss.close(); 
+        } catch (Exception e) { 
+            System.out.println(e); 
+        } 
+    } 
+}

@@ -1,0 +1,143 @@
+/* Implementation of Dijkstra’s algorithm. 
+*/
+#include <stdio.h>
+#include <stdlib.h> // For exit()
+
+#define MAX_NODES 50
+#define INFINITY 1000
+
+char name[MAX_NODES];
+int dist[MAX_NODES][MAX_NODES];
+
+int shortest_path(int n, int s, int d, int p[]);
+
+void clearScreen() {
+    printf("\033[2J\033[1;1H"); // ANSI escape sequence to clear screen
+}
+
+int main() {
+    int n, i, j, l;
+    char sour, dest, c = 'A';
+    int path[MAX_NODES];
+
+    clearScreen();
+    
+    printf("Enter the number of nodes (up to %d): ", MAX_NODES);
+    scanf("%d", &n);
+
+    if (n < 2 || n > MAX_NODES) {
+        printf("Invalid number of nodes. Please enter a number between 2 and %d.\n", MAX_NODES);
+        exit(1);
+    }
+
+    printf("\nEnter the distances between each pair of nodes.\n");
+    printf("If there is no path, enter 0 as the distance.\n\n");
+
+    // Input node names and distance matrix
+    printf("\t");
+    for (i = 0; i < n; i++) {
+        name[i] = c++;
+        printf("%c\t", name[i]);
+    }
+
+    printf("\n\n");
+    for (i = 0; i < n; i++) {
+        printf("%c\t", name[i]);
+        for (j = 0; j < n; j++) {
+            scanf("%d", &dist[i][j]);
+        }
+    }
+
+    // Get source node
+A:
+    printf("\nEnter the source node (single character name): ");
+    scanf(" %c", &sour);
+    for (i = 0; i < n; i++) {
+        if (name[i] == sour) {
+            break;
+        }
+    }
+    if (i == n) {
+        printf("\nNo node with the given name. Try again.\n");
+        goto A;
+    }
+
+    // Get destination node
+B:
+    printf("\n\nEnter the destination node (single character name): ");
+    scanf(" %c", &dest);
+    for (j = 0; j < n; j++) {
+        if (name[j] == dest) {
+            break;
+        }
+    }
+    if (j == n) {
+        printf("\nNo node with the given destination name. Try again.\n");
+        goto B;
+    }
+
+    l = shortest_path(n, i, j, path);
+
+    // Print shortest path
+    printf("The shortest path from %c to %c is: ", name[i], name[j]);
+    for (i = l - 1; i > 0; i--) {
+        printf("%c -> ", name[path[i]]);
+    }
+    printf("%c\n", name[path[0]]);
+
+    return 0;
+}
+
+int shortest_path(int n, int s, int d, int p[]) {
+    struct state {
+        int predecessor;
+        int length;
+        int label;
+    } state[MAX_NODES];
+
+    int i, k, min;
+
+    // Initialize states
+    for (i = 0; i < n; i++) {
+        state[i].predecessor = -1;
+        state[i].length = INFINITY;
+        state[i].label = 0;
+    }
+
+    state[s].length = 0;
+    state[s].label = 1;
+    k = s;
+
+    do {
+        for (i = 0; i < n; i++) {
+            if (dist[k][i] != 0 && state[i].label == 0) {
+                if (state[k].length + dist[k][i] < state[i].length) {
+                    state[i].predecessor = k;
+                    state[i].length = state[k].length + dist[k][i];
+                }
+            }
+        }
+
+        min = INFINITY;
+        for (i = 0; i < n; i++) {
+            if (state[i].label == 0 && state[i].length < min) {
+                min = state[i].length;
+                k = i;
+            }
+        }
+
+        state[k].label = 1;
+    } while (k != d);
+
+    printf("\n\nThe shortest distance from %c to %c is: %d\n\n", name[s], name[d], state[d].length);
+
+    // Construct the path
+    i = 0;
+    k = d;
+    do {
+        p[i++] = k;
+        k = state[k].predecessor;
+    } while (k >= 0);
+
+    return i; // Return length of the path (number of vertices in the path)
+}

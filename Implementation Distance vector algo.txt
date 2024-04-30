@@ -1,0 +1,50 @@
+/*Implementation Distance vector algorithm*/
+#include<stdio.h>
+#include<string.h>
+
+int main() {
+    int i, j, x, y, n, d, delay = 1000;
+    int edge[50][50], c[50], cost[50][50];
+
+    printf("\nEnter the No. of nodes in the graph: ");
+    scanf("%d", &n);
+
+    // Initialize edge matrix
+    for(i = 0; i < n; i++) {
+        for(j = i; j < n; j++) {
+            printf("\nIs there an edge from %d to %d? (1/0): ", i+1, j+1);
+            scanf("%d", &d);
+
+            if(d) {
+                edge[i][j] = 1;
+                edge[j][i] = 1; // Assuming undirected graph
+            } else {
+                edge[i][j] = 0;
+                edge[j][i] = 0;
+            }
+        }
+    }
+
+    printf("\nEnter the source and destination node to find the routing cost: ");
+    scanf("%d %d", &x, &y);
+
+    // Calculate routing cost
+    for(i = 0; i < n; i++) {
+        if(edge[x-1][i] == 1) { // Check if there's a direct edge from x to i+1
+            printf("\nEnter the cost from node %d to its neighbor %d: ", x, i+1);
+            scanf("%d", &c[i]);
+            printf("Enter the routing cost from %d to %d: ", i+1, y);
+            scanf("%d", &cost[i][y-1]);
+
+            if(delay > (c[i] + cost[i][y-1])) {
+                d = i+1;
+                delay = c[i] + cost[i][y-1];
+            }
+        }
+    }
+
+    printf("\nEstimated cost from node %d to %d is %d via node %d.\n", x, y, delay, d);
+
+    return 0;
+}
+

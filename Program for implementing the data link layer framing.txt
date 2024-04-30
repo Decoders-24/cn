@@ -1,0 +1,67 @@
+/*Task 3: Program for implementing the data link layer framing method for Bit Stuffing. 
+
+Description: 
+The Bit stuffing technique allows data frames to contain an arbitrary number of bits and allows character codes with an arbitrary number of bits per character. In this each frame begins and ends with a special bit pattern, 01111110 called a flag byte. When ever the sender’s data link encounters five consecutive ones in the data. It automatically stuffs a ‘0’ bit into the out going bit stream. This is called “bit stuffing”.
+3) Bit Sequence*/
+
+#include<stdio.h>
+int main()
+{
+	int i=0,len_ip=0,count;
+	int len_op=0;
+	int j=0,s=0,xxx=0,five=0;
+	char ip[' '],op[' '],decode_op[' '];
+	char pre_post[]={'0','1','1','1','1','1','1','0'};
+
+	printf("Enter input bitsequence: \n");
+	scanf("%s",ip);
+	for(i=0;ip[i]!=0;i++) len_ip++;
+/*Stuffing*/
+	for(i=0;i<8;i++) op[i]=pre_post[i];
+	count=i;
+	do
+	{
+		if(ip[j]=='1') five++;
+		else five=0;
+		op[count]=ip[j];
+		count++;
+		j++;
+
+		if(five==5)
+		{
+			op[count++]='0';
+			five=0;
+		}
+	}while(j<len_ip);
+	for(s=count,xxx=0;s<(count+8);s++,xxx++)
+	{
+		op[s]=pre_post[xxx];
+	}
+	printf("Output\n");
+	printf(" ------ ");
+	printf("\nStuffedBitSequence is:");
+	op[s]=0;
+	puts(op);
+/*Destuffing*/
+	j=0;
+	five=0;
+	len_op=count+8;
+	i=8;
+	do
+	{
+		decode_op[j++]=op[i];
+		if(op[i]=='1') five++;
+		else five=0;
+		if(five==5)
+		{
+			i++;
+			five=0;
+		}
+		len_op--;
+		i++;
+	}while((len_op-8)!=0);
+	decode_op[len_ip]=0;
+	printf("Destuffed BitSequence is:");
+	puts(decode_op);
+}
+

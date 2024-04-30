@@ -1,0 +1,43 @@
+/*: Implementation of stop and wait protocol. */
+
+#include<stdio.h>
+#include<string.h>
+#include<time.h> // Include time.h for time related functions
+#include<unistd.h> // Include unistd.h for sleep function
+// #include<windows.h> // This header is not necessary for Linux environment
+
+int main() {
+    int n, i, seq;
+    char f[100]; // Adjust array size as needed
+    time_t lt;
+    struct tm *ptr;
+
+    printf("Enter number of frames: \n");
+    scanf("%d", &n);
+
+    for (i = 0; i < n; i++) {
+        printf("Enter sequence number: ");
+        scanf("%d", &seq);
+
+        printf("Enter frame: ");
+        scanf("%s", f);
+
+        lt = time(NULL);
+        ptr = localtime(&lt);
+        printf("Sending time: %s", asctime(ptr));
+
+        // Simulating a delay of 5 seconds
+        sleep(5);
+
+        lt = time(NULL);
+        ptr = localtime(&lt);
+        printf("Receiving time: %s", asctime(ptr));
+
+        printf("Received frame %d\n", seq);
+    }
+
+    return 0;
+}
+
+
+
